@@ -3,6 +3,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 import io
 from utils.data_manager import DataManager
+from utils.pdf_exporter import PDFExporter
+from utils.auth import Auth
 
 # Configuración de la página
 st.set_page_config(
@@ -13,8 +15,15 @@ st.set_page_config(
 
 # Inicializar el gestor de datos
 data_manager = DataManager()
+auth = Auth()
 
 def main():
+    # Verificar autenticación
+    if not auth.login():
+        return
+    
+    # Mostrar info de usuario
+    auth.mostrar_info_usuario()
     st.title("📊 Panel de Administración")
     st.markdown("---")
     
@@ -110,7 +119,7 @@ def main():
     
     # Botones de exportación
     st.subheader("📤 Exportar Datos")
-    col_export1, col_export2, col_export3 = st.columns(3)
+    col_export1, col_export2, col_export3, col_export4 = st.columns(4)
     
     with col_export1:
         # Exportar a CSV
@@ -149,6 +158,17 @@ def main():
         )
     
     with col_export3:
+        # Exportar a PDF
+        pdf_exporter = PDFExporter()
+        pdf_content, pdf_filename = pdf_exporter.generar_reporte_completo(df_filtrado, incluir_estadisticas=True)
+        st.download_button(
+            label="📕 Descargar PDF",
+            data=pdf_content,
+            file_name=pdf_filename,
+            mime="application/pdf"
+        )
+    
+    with col_export4:
         if st.button("🗑️ Limpiar Filtros"):
             st.rerun()
     
