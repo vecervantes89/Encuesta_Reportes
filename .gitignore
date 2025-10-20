@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pythonlibs/
+.DS_Store
+.env
+.local/
+state/
+replit/
+uv.lock
+backups/
+*.zip
